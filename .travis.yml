@@ -1,0 +1,15 @@
+language: python
+python:
+- '2.7'
+install:
+- bundle install
+- pip install -r requirements.txt
+script: python app_tests.py
+deploy:
+  provider: heroku
+  api_key:
+    secure: oaP27p4X8SFQpI5NzS6uvp4QGhY9xO5qLtmAMtgSUS2gRMPOYRbPlXqEzpzksiLS7Rz+prkYNCEIc6HQNxVMXY8TviW/qWrDL8F9IFFCCl6oHb5Va4wAZTcaVaMl46sz3WVwb2JEHWoDzBEoUElKA0DQObNBEDq/0/MBb02oMTo=
+  app: lr-concept-titles-service 
+  on:
+    repo: LandRegistry/concept-titles-service
+  strategy: git
