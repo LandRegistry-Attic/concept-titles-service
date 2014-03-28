@@ -11,3 +11,4 @@ deploy:
   app: lr-concept-titles-service
   on:
     repo: LandRegistry/concept-titles-service
+    strategy: git
