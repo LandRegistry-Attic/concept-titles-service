@@ -1,21 +1,21 @@
 import os
-import flaskr
+import app
 import unittest
 import tempfile
 
-class FlaskrTestCase(unittest.TestCase):
+class HomeTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db_fd, flaskr.app.config['DATABASE'] = tempfile.mkstemp()
-        flaskr.app.config['TESTING'] = True
-        self.app = flaskr.app.test_client()
-        flaskr.init_db()
+        self.db_fd, app.app.config['DATABASE'] = tempfile.mkstemp()
+        app.app.config['TESTING'] = True
+        self.app = app.app.test_client()
+        #app.init_db()
 
     def tearDown(self):
         os.close(self.db_fd)
-        os.unlink(flaskr.app.config['DATABASE'])
+        os.unlink(app.app.config['DATABASE'])
 
-    def test_empty_db(self):
+    def test_property(self):
         rv = self.app.get('/titles')
         assert 'Chris' in rv.data
 
