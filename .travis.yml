@@ -7,8 +7,7 @@ script: python app_tests.py
 deploy:
   provider: heroku
   api_key:
-    secure: oaP27p4X8SFQpI5NzS6uvp4QGhY9xO5qLtmAMtgSUS2gRMPOYRbPlXqEzpzksiLS7Rz+prkYNCEIc6HQNxVMXY8TviW/qWrDL8F9IFFCCl6oHb5Va4wAZTcaVaMl46sz3WVwb2JEHWoDzBEoUElKA0DQObNBEDq/0/MBb02oMTo=
-  app: lr-concept-titles-service 
+    secure: cWj1ugFprBDlgyo7MhFv0ciua2lP3f8BKaFh5GfmVf7XWKwAj3IuR64QXQefWJe5mAnNK8SUrn57RNp9joB3PxFukDuFDksYygnc/k67QEgPj11dZa5WyKfV6hCjs6l0ylEkwE7QD2Su3cp25J8hw7ky2r9GieRAH4fbSyCK9ow=
+  app: concept-titles-service
   on:
     repo: LandRegistry/concept-titles-service
-  strategy: git
