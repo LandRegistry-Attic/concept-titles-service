@@ -50,10 +50,15 @@ class TitleList(restful.Resource):
 
 class Title(restful.Resource):
     def get(self, title_id):
-        titles = TitleModel.query.filter_by( titleId = title_id)        
-        return jsonify( json_list=[i.serialize for i in titles] )
+        title = TitleModel.query.filter_by( titleId = title_id).first()  
 
+        if title:
+            return jsonify( title.serialize )
+        else:
+            restful.abort( 404 )
 
+      
+      
 api.add_resource(TitleList, '/titles')
 api.add_resource(Title, '/titles/<string:title_id>')
 db.create_all()

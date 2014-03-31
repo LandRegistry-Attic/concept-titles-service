@@ -15,9 +15,14 @@ class HomeTestCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(app.app.config['DATABASE'])
 
-    def test_property(self):
-        rv = self.app.get('/titles')
-        assert 'Chris' in rv.data
+ #   def test_property(self):
+ #       rv = self.app.get('/titles')
+ #       assert 'Chris' in rv.data
+
+ #   def test_property(self):
+ #       rv = self.app.post('/titles')
+ #       assert 
+
 
 if __name__ == '__main__':
     unittest.main()
