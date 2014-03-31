@@ -1,3 +1,7 @@
+db:
+  image: orchardup/postgresql
+  ports:
+    - "5432"
 web:
   build: .
   command: python app.py
@@ -6,6 +10,5 @@ web:
   volumes:
    - .:/code
   links:
-   - redis
-redis:
-  image: orchardup/redis
+   - db
+
