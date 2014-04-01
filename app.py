@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask.ext import restful
 from flask.ext.restful import reqparse
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -14,35 +14,44 @@ db = SQLAlchemy(app)
 
 class TitleModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    titleId = db.Column( db.String(80), unique=True)
+    title_id = db.Column( db.String(80) )
+    content = db.Column( db.String(10000) )
 
-    def __init__(self, titleId ):
-        self.titleId = titleId
+    def __init__(self, titleId, content ):
+        self.title_id = titleId
+        self.content = content
 
     @property
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
-           'titleId': self.titleId
+       
+           "title" : json.loads(self.content)
+       
        }
 
 
-class TitleList(restful.Resource):
+class TitleRevisions(restful.Resource):
 
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        super(TitleList, self).__init__()
+        super(TitleRevisions, self).__init__()
 
-    def get(self):
-        titles = TitleModel.query.all()
-        return jsonify(json_list=[i.serialize for i in titles])
 
     def post(self):
-        #TODO Add regex validation for title id
-        self.parser.add_argument('titleId', type=str, required=True, location='json', help="Invalid Title Id format")
-        args = self.parser.parse_args()
-        title = TitleModel(args['titleId'])
-        db.session.add( title )
+        content = json.loads(request.data)
+        title_id = request.json["title_id"]
+
+        title = TitleModel(title_id, request.data)
+
+
+        existing = TitleModel.query.filter_by( title_id = title_id).first()  
+
+        if existing:
+            db.session.delete( existing )
+            db.session.add( title )
+        else:
+            db.session.add( title )
         db.session.commit()
         return "", 201
     
@@ -50,17 +59,22 @@ class TitleList(restful.Resource):
 
 class Title(restful.Resource):
     def get(self, title_id):
-        title = TitleModel.query.filter_by( titleId = title_id).first()  
+        title = TitleModel.query.filter_by( title_id = title_id).first()  
 
         if title:
             return jsonify( title.serialize )
         else:
             restful.abort( 404 )
 
+class TitleList(restful.Resource):
+    def get(self):
+        titles = TitleModel.query.all()
+        return jsonify( titles = [i.serialize for i in titles] )
       
-      
-api.add_resource(TitleList, '/titles')
+api.add_resource(TitleRevisions, '/titles-revisions')
 api.add_resource(Title, '/titles/<string:title_id>')
+api.add_resource(TitleList, '/titles')
+
 db.create_all()
 
 if __name__ == '__main__':
