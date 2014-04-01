@@ -40,11 +40,12 @@ class TitleRevisions(restful.Resource):
 
     def post(self):
         content = json.loads(request.data)
-        title_id = request.json["title_id"]
+        try:
+            title_id = request.json["content"]["title_id"]
+        except:
+            return "", 400
 
         title = TitleModel(title_id, request.data)
-
-
         existing = TitleModel.query.filter_by( title_id = title_id).first()  
 
         if existing:
