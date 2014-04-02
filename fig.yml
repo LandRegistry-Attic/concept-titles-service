@@ -2,16 +2,16 @@ db:
   image: orchardup/postgresql
   ports:
     - "5432"
+  environment:
+    POSTGRESQL_USER: titles
+    POSTGRESQL_PASS: password
+    POSTGRESQL_DB: titles
 web:
   build: .
-  command: python app.py
+  command: sh -c "sleep 3; python app.py"
   ports:
    - "5000:5000"
   volumes:
    - .:/code
   links:
    - db
-  environment:
-    POSTGRESQL_USER=titles-service
-    POSTGRESQL_PASS=password
-

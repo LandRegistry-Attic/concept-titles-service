@@ -1,4 +1,6 @@
 import os
+# hack
+os.environ['DATABASE_URL'] = 'sqlite:////tmp/test.db'
 import app
 import unittest
 import tempfile
