@@ -3,13 +3,13 @@ from flask.ext import restful
 from flask.ext.restful import reqparse
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import jsonify
-
+import pyscopg2
 import json
 import os
 
 app = Flask(__name__)
 api = restful.Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://titles-service:password@172.17.0.3:5432/concepttitlesservice_db_run_5/concepttitlesservice_db_1'
 db = SQLAlchemy(app)
 
 class TitleModel(db.Model):

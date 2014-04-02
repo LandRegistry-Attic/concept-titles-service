@@ -2,3 +2,4 @@ flask
 flask-restful
 gunicorn==18.0
 Flask-SQLAlchemy
+psycopg2

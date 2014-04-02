@@ -11,4 +11,7 @@ web:
    - .:/code
   links:
    - db
+  environment:
+    POSTGRESQL_USER=titles-service
+    POSTGRESQL_PASS=password
 
