@@ -3,13 +3,15 @@ from flask.ext import restful
 from flask.ext.restful import reqparse
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import jsonify
-
 import json
 import os
 
 app = Flask(__name__)
 api = restful.Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+if 'DATABASE_URL' in os.environ:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL'].replace('postgres://', 'postgresql+psycopg2://')
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://titles:password@%s/titles' % os.environ['DB_1_PORT_5432_TCP'].replace('tcp://', '')
 db = SQLAlchemy(app)
 
 class TitleModel(db.Model):
@@ -25,9 +27,9 @@ class TitleModel(db.Model):
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
-       
+
            "title" : json.loads(self.content)
-       
+
        }
 
 
@@ -46,7 +48,7 @@ class TitleRevisions(restful.Resource):
             return "", 400
 
         title = TitleModel(title_id, request.data)
-        existing = TitleModel.query.filter_by( title_id = title_id).first()  
+        existing = TitleModel.query.filter_by( title_id = title_id).first()
 
         if existing:
             db.session.delete( existing )
@@ -55,12 +57,12 @@ class TitleRevisions(restful.Resource):
             db.session.add( title )
         db.session.commit()
         return "", 201
-    
+
 
 
 class Title(restful.Resource):
     def get(self, title_id):
-        title = TitleModel.query.filter_by( title_id = title_id).first()  
+        title = TitleModel.query.filter_by( title_id = title_id).first()
 
         if title:
             return jsonify( title.serialize )
@@ -71,7 +73,7 @@ class TitleList(restful.Resource):
     def get(self):
         titles = TitleModel.query.all()
         return jsonify( titles = [i.serialize for i in titles] )
-      
+
 api.add_resource(TitleRevisions, '/titles-revisions')
 api.add_resource(Title, '/titles/<string:title_id>')
 api.add_resource(TitleList, '/titles')
