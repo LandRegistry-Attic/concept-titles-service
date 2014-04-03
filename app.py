@@ -46,10 +46,14 @@ class TitleRevisions(restful.Resource):
         content = json.loads(request.data)
         try:
             title_id = request.json["content"]["title_id"]
-            postcode = request.json["content"]["postcode"]
+
         except:
             return "", 400
 
+        try:
+            postcode = request.json["content"]["postcode"]
+        except:
+            postcode = ""
 
         title = TitleModel(title_id, postcode, json.dumps(request.json["content"]))
 
@@ -80,7 +84,7 @@ class TitleList(restful.Resource):
     def get(self):
         if 'postcode' in request.args:
             titles = TitleModel.query.filter_by( postcode = request.args['postcode'])
-            return jsonify( titles = [i.serialize for i in titles] ) 
+            return jsonify( titles = [i.serialize['title'] for i in titles] ) 
         else:   
             titles = TitleModel.query.all()
             return jsonify( titles = [i.serialize['title'] for i in titles] )
