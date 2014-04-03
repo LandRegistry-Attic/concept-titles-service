@@ -47,7 +47,7 @@ class TitleRevisions(restful.Resource):
         except:
             return "", 400
 
-        title = TitleModel(title_id, request.data)
+        title = TitleModel(title_id, json.dumps(request.json["content"]))
         existing = TitleModel.query.filter_by( title_id = title_id).first()
 
         if existing:
@@ -72,7 +72,7 @@ class Title(restful.Resource):
 class TitleList(restful.Resource):
     def get(self):
         titles = TitleModel.query.all()
-        return jsonify( titles = [i.serialize for i in titles] )
+        return jsonify( titles = [i.serialize['title'] for i in titles] )
 
 api.add_resource(TitleRevisions, '/titles-revisions')
 api.add_resource(Title, '/titles/<string:title_id>')
