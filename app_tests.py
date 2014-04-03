@@ -32,10 +32,10 @@ class HomeTestCase(unittest.TestCase):
         }), content_type='application/json')
         rv = self.app.get('/titles')
         self.assertEqual(json.loads(rv.data), {
-            'titles': [{'title': {'content': {
+            'titles': [{
                 "title_id": "AB1234",
                 "address": "123 Fake St",
-            }}}]
+            }]
         })
         
 
