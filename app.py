@@ -51,7 +51,8 @@ class TitleRevisions(restful.Resource):
             return "", 400
 
         try:
-            postcode = request.json["content"]["postcode"]
+            raw_postcode = request.json["content"]["postcode"]
+            postcode = raw_postcode.replace(" ", "")
         except:
             postcode = ""
 
@@ -83,7 +84,9 @@ class Title(restful.Resource):
 class TitleList(restful.Resource):
     def get(self):
         if 'postcode' in request.args:
-            titles = TitleModel.query.filter_by( postcode = request.args['postcode'])
+            raw_postcode = request.args['postcode']
+            postcode = raw_postcode.replace(" ", "")
+            titles = TitleModel.query.filter_by( postcode = postcode)
             return jsonify( titles = [i.serialize['title'] for i in titles] ) 
         else:   
             titles = TitleModel.query.all()
