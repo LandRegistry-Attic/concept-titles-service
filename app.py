@@ -21,7 +21,7 @@ api = restful.Api(app)
 if 'DATABASE_URL' in os.environ:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL'].replace('postgres://', 'postgresql+psycopg2://')
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://titles:password@%s/titles' % os.environ['DB_1_PORT_5432_TCP'].replace('tcp://', '')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://titles:password@%s/titles' % os.environ['TITLESDB_1_PORT_5432_TCP'].replace('tcp://', '')
 db = SQLAlchemy(app)
 
 class TitleModel(db.Model):
@@ -110,4 +110,4 @@ api.add_resource(TitleList, '/titles')
 db.create_all()
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", port=8004, debug=True)
