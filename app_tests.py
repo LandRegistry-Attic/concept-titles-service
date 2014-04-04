@@ -37,8 +37,92 @@ class HomeTestCase(unittest.TestCase):
                 "address": "123 Fake St",
             }]
         })
-        
 
+    def test_titles_revisions_postcode(self):
+        rv = self.app.post('/titles-revisions', data=json.dumps({
+            "content": {
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            },
+        }), content_type='application/json')
+        rv = self.app.get('/titles')
+        self.assertEqual(json.loads(rv.data), {
+            'titles': [{
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            }]
+        })        
+
+    def test_titles_postcode_query(self):
+        rv = self.app.post('/titles-revisions', data=json.dumps({
+            "content": {
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            },
+        }), content_type='application/json')
+
+        rv = self.app.get('/titles?postcode=KT23 3AA')
+        self.assertEqual(json.loads(rv.data), {
+            'titles': [{
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            }]
+        })        
+
+
+    def test_titles_postcode_query_empty(self):
+        rv = self.app.post('/titles-revisions', data=json.dumps({
+            "content": {
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            },
+        }), content_type='application/json')
+
+        rv = self.app.get('/titles?postcode=KT23 3AB')
+        self.assertEqual(json.loads(rv.data), {
+            'titles': []
+        })        
+
+    def test_titles_postcode_query_no_whitespace(self):
+        rv = self.app.post('/titles-revisions', data=json.dumps({
+            "content": {
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            },
+        }), content_type='application/json')
+
+        rv = self.app.get('/titles?postcode=KT233AA')
+        self.assertEqual(json.loads(rv.data), {
+            'titles': [{
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT23 3AA"
+            }]
+        })    
+
+    def test_titles_postcode_input_no_whitespace(self):
+        rv = self.app.post('/titles-revisions', data=json.dumps({
+            "content": {
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT233AA"
+            },
+        }), content_type='application/json')
+
+        rv = self.app.get('/titles?postcode=KT23 3AA')
+        self.assertEqual(json.loads(rv.data), {
+            'titles': [{
+                "title_id": "AB1234",
+                "address": "123 Fake St",
+                "postcode": "KT233AA"
+            }]
+        })    
 
 if __name__ == '__main__':
     unittest.main()

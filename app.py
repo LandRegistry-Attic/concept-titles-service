@@ -17,10 +17,12 @@ db = SQLAlchemy(app)
 class TitleModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title_id = db.Column( db.String(80) )
+    postcode = db.Column( db.String(15), index=True)
     content = db.Column( db.String(10000) )
 
-    def __init__(self, titleId, content ):
+    def __init__(self, titleId, postcode, content ):
         self.title_id = titleId
+        self.postcode = postcode
         self.content = content
 
     @property
@@ -44,10 +46,18 @@ class TitleRevisions(restful.Resource):
         content = json.loads(request.data)
         try:
             title_id = request.json["content"]["title_id"]
+
         except:
             return "", 400
 
-        title = TitleModel(title_id, json.dumps(request.json["content"]))
+        try:
+            raw_postcode = request.json["content"]["postcode"]
+            postcode = raw_postcode.replace(" ", "")
+        except:
+            postcode = ""
+
+        title = TitleModel(title_id, postcode, json.dumps(request.json["content"]))
+
         existing = TitleModel.query.filter_by( title_id = title_id).first()
 
         if existing:
@@ -69,15 +79,24 @@ class Title(restful.Resource):
         else:
             restful.abort( 404 )
 
+
+
 class TitleList(restful.Resource):
     def get(self):
-        titles = TitleModel.query.all()
-        return jsonify( titles = [i.serialize['title'] for i in titles] )
+        if 'postcode' in request.args:
+            raw_postcode = request.args['postcode']
+            postcode = raw_postcode.replace(" ", "")
+            titles = TitleModel.query.filter_by( postcode = postcode)
+            return jsonify( titles = [i.serialize['title'] for i in titles] ) 
+        else:   
+            titles = TitleModel.query.all()
+            return jsonify( titles = [i.serialize['title'] for i in titles] )
+
+
 
 api.add_resource(TitleRevisions, '/titles-revisions')
 api.add_resource(Title, '/titles/<string:title_id>')
 api.add_resource(TitleList, '/titles')
-
 db.create_all()
 
 if __name__ == '__main__':
