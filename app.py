@@ -16,12 +16,12 @@ db = SQLAlchemy(app)
 
 class TitleModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title_id = db.Column( db.String(80) )
+    title_number = db.Column( db.String(80) )
     postcode = db.Column( db.String(15), index=True)
     content = db.Column( db.String(10000) )
 
-    def __init__(self, titleId, postcode, content ):
-        self.title_id = titleId
+    def __init__(self, title_number, postcode, content ):
+        self.title_number = title_number
         self.postcode = postcode
         self.content = content
 
@@ -45,7 +45,7 @@ class TitleRevisions(restful.Resource):
     def post(self):
         content = json.loads(request.data)
         try:
-            title_id = request.json["content"]["title_id"]
+            title_number = request.json["content"]["title_number"]
 
         except:
             return "", 400
@@ -56,9 +56,9 @@ class TitleRevisions(restful.Resource):
         except:
             postcode = ""
 
-        title = TitleModel(title_id, postcode, json.dumps(request.json["content"]))
+        title = TitleModel(title_number, postcode, json.dumps(request.json["content"]))
 
-        existing = TitleModel.query.filter_by( title_id = title_id).first()
+        existing = TitleModel.query.filter_by( title_number = title_number).first()
 
         if existing:
             db.session.delete( existing )
@@ -71,8 +71,8 @@ class TitleRevisions(restful.Resource):
 
 
 class Title(restful.Resource):
-    def get(self, title_id):
-        title = TitleModel.query.filter_by( title_id = title_id).first()
+    def get(self, title_number):
+        title = TitleModel.query.filter_by( title_number = title_number).first()
 
         if title:
             return jsonify( title.serialize )
@@ -95,9 +95,9 @@ class TitleList(restful.Resource):
 
 
 api.add_resource(TitleRevisions, '/titles-revisions')
-api.add_resource(Title, '/titles/<string:title_id>')
+api.add_resource(Title, '/titles/<string:title_number>')
 api.add_resource(TitleList, '/titles')
 db.create_all()
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",debug=True)
+    app.run(host="0.0.0.0", debug=True)
