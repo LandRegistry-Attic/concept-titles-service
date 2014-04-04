@@ -1,4 +1,5 @@
 flask
+Flask-BasicAuth
 flask-restful
 gunicorn==18.0
 Flask-SQLAlchemy

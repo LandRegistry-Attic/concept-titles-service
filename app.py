@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask.ext import restful
+from flask.ext.basicauth import BasicAuth
 from flask.ext.restful import reqparse
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import jsonify
@@ -7,6 +8,15 @@ import json
 import os
 
 app = Flask(__name__)
+
+# Auth
+if os.environ.get('BASIC_AUTH_USERNAME'):
+    app.config['BASIC_AUTH_USERNAME'] = os.environ['BASIC_AUTH_USERNAME']
+    app.config['BASIC_AUTH_PASSWORD'] = os.environ['BASIC_AUTH_PASSWORD']
+    app.config['BASIC_AUTH_FORCE'] = True
+    basic_auth = BasicAuth(app)
+
+
 api = restful.Api(app)
 if 'DATABASE_URL' in os.environ:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL'].replace('postgres://', 'postgresql+psycopg2://')
