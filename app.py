@@ -40,7 +40,7 @@ class TitleModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title_number = db.Column( db.String(80) )
     postcode = db.Column( db.String(15), index=True)
-    content = db.Column( db.String(10000) )
+    content = db.Column( db.Text() )
 
     def __init__(self, title_number, postcode, content ):
         self.title_number = title_number
