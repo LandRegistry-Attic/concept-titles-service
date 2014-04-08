@@ -4,3 +4,4 @@ flask-restful
 gunicorn==18.0
 Flask-SQLAlchemy
 psycopg2
+raven[flask]==4.1.1
